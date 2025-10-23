@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { Roles } from 'src/auth/decorators/role.decorator';
+import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination-query.dto';
+import { ParseMongoIdPipe } from 'src/pipes/mongo-id.pipe';
 
 @Controller('categories')
 export class CategoryController {
@@ -19,28 +21,28 @@ export class CategoryController {
   @Roles(['admin', 'user'])
   @UseGuards(AuthGuard)
   @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  findAll(@Query() paginationDto: PaginationQueryDto) {
+    return this.categoryService.findAll(paginationDto);
   }
 
   @Roles(['admin', 'user'])
   @UseGuards(AuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoryService.findOne(+id);
+  findOne(@Param('id', ParseMongoIdPipe) id: string) {
+    return this.categoryService.findOne(id);
   }
 
   @Roles(['admin'])
   @UseGuards(AuthGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.categoryService.update(+id, updateCategoryDto);
+  update(@Param('id', ParseMongoIdPipe) id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
+    return this.categoryService.update(id, updateCategoryDto);
   }
 
   @Roles(['admin'])
   @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoryService.remove(+id);
+  remove(@Param('id', ParseMongoIdPipe) id: string) {
+    return this.categoryService.remove(id);
   }
 }
