@@ -11,6 +11,7 @@ import { PaginationModule } from './common/pagination/pagination.module';
 import mailerConfig from './config/mailer.config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { CategoryModule } from './category/category.module';
+import { SubCategoryModule } from './sub-category/sub-category.module'
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { CategoryModule } from './category/category.module';
         }
       })
     }),
-    CategoryModule
+    CategoryModule,
+    SubCategoryModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -18,7 +18,7 @@ export class UserService {
     ) { }
 
     async getAllUser(paginationDto: PaginationQueryDto) {
-        return await this.paginationService.paginateQuery<UserDocument>(paginationDto, this.userModel)
+        return await this.paginationService.paginateQuery<UserDocument, User>(paginationDto, this.userModel)
     }
 
     async createUser(userDto: CreateUserDto) {

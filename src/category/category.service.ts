@@ -30,7 +30,7 @@ export class CategoryService {
   }
 
   async findAll(paginationDto: PaginationQueryDto) {
-    const categories = await this.paginationService.paginateQuery<CategoryDocument>(paginationDto, this.categoryModel);
+    const categories = await this.paginationService.paginateQuery<CategoryDocument, Category>(paginationDto, this.categoryModel);
     if(categories.data.length === 0) {
       throw new NotFoundException();
     }

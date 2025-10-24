@@ -17,5 +17,8 @@ import { PaginationModule } from 'src/common/pagination/pagination.module';
     MongooseModule.forFeature([{ name: Category.name, schema: CategorySchema }]),
     PaginationModule,
   ],
+  exports: [
+    CategoryService,
+  ]
 })
 export class CategoryModule { }
