@@ -12,6 +12,7 @@ import mailerConfig from './config/mailer.config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { CategoryModule } from './category/category.module';
 import { SubCategoryModule } from './sub-category/sub-category.module'
+import { BrandModule } from './brand/brand.module';
 
 @Module({
   imports: [
@@ -39,7 +40,8 @@ import { SubCategoryModule } from './sub-category/sub-category.module'
       })
     }),
     CategoryModule,
-    SubCategoryModule
+    SubCategoryModule,
+    BrandModule
   ],
   controllers: [AppController],
   providers: [AppService],
