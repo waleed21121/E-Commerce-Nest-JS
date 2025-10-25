@@ -14,6 +14,8 @@ import { CategoryModule } from './category/category.module';
 import { SubCategoryModule } from './sub-category/sub-category.module'
 import { BrandModule } from './brand/brand.module';
 import { CouponModule } from './coupon/coupon.module';
+import { SupplierModule } from './suppliers/supplier.module';
+import { RequestProductModule } from './request-product/request-product.module';
 
 @Module({
   imports: [
@@ -43,7 +45,9 @@ import { CouponModule } from './coupon/coupon.module';
     CategoryModule,
     SubCategoryModule,
     BrandModule,
-    CouponModule
+    CouponModule,
+    SupplierModule,
+    RequestProductModule
   ],
   controllers: [AppController],
   providers: [AppService],
