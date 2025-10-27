@@ -2,8 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { PaginationQueryDto } from './dtos/pagination-query.dto';
-import { Document, Model, Schema } from 'mongoose';
+import { Document, FilterQuery, Model, Schema, SortOrder } from 'mongoose';
 import { PaginationResult } from './interfaces/pagination-result.interface';
+import { ProductDocument } from 'src/product/schemas/product.schema ';
 
 @Injectable()
 export class PaginationService {
@@ -12,13 +13,64 @@ export class PaginationService {
     async paginateQuery<T extends Document, D extends Object>(
         paginationQueryDto: PaginationQueryDto,
         model: Model<T>,
-        populateFields?: (keyof D)[]
+        populateFields?: (keyof D)[],
+        filters?: Object,
     ): Promise<PaginationResult<T>> {
+        // Pagination
         const skip = (paginationQueryDto.page - 1) * paginationQueryDto.limit;
         const limit = paginationQueryDto.limit;
 
-        let query = model.find().skip(skip).limit(limit);
-        if(populateFields) {
+        // filters & sort
+        let findWherOptions: FilterQuery<ProductDocument> = {};
+        let sortOptions: Record<string, SortOrder> = {};
+
+        if (filters) {
+            // console.log(model.schema.obj);
+            Object.keys(filters).forEach((key) => {
+
+                // extracting filters
+                const [attribute, operator] = key.split('_');
+                //console.log(Object.keys(model.schema.obj).includes(attribute));
+
+                if (Object.keys(model.schema.obj).includes(attribute)) {
+                    if (operator === 'gte') {
+                        Object.defineProperty(findWherOptions, attribute, {
+                            value: { $gte: filters[key] },
+                            enumerable: true
+                        })
+                    } else if (operator === 'lte') {
+                        Object.defineProperty(findWherOptions, attribute, {
+                            value: { $lte: filters[key] },
+                            enumerable: true
+                        })
+                    } else {
+                        Object.defineProperty(findWherOptions, attribute, {
+                            value: filters[key],
+                            enumerable: true
+                        })
+                    }
+                } else if (attribute === 'sort') {
+                    const fields: string[] = (filters[key]).split(',');
+                    fields.forEach((field) => {
+                        const [attribute, order] = field.split('_');
+                        if ((order === 'asc' || order === 'desc') && Object.keys(model.schema.obj).includes(attribute)) {
+                            Object.defineProperty(sortOptions, attribute, {
+                                value: order,
+                                enumerable: true
+                            })
+                        }
+                    })
+
+                    //console.log(sortOptions);
+                }
+            })
+            
+            // console.log(findWherOptions);
+        }
+
+
+        let query = model.find(findWherOptions).skip(skip).limit(limit).sort(sortOptions);
+        if (populateFields) {
             query.populate(populateFields as string[], '-__v').select('-__v')
         }
 

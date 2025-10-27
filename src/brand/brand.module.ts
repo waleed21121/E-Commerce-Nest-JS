@@ -16,6 +16,9 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.registerAsync(authConfig.asProvider()),
     MongooseModule.forFeature([{ name: Brand.name, schema: BrandSchema }]),
     PaginationModule
+  ],
+  exports: [
+    BrandService
   ]
 })
 export class BrandModule { }

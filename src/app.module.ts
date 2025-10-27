@@ -16,6 +16,8 @@ import { BrandModule } from './brand/brand.module';
 import { CouponModule } from './coupon/coupon.module';
 import { SupplierModule } from './suppliers/supplier.module';
 import { RequestProductModule } from './request-product/request-product.module';
+import { TaxModule } from './tax/tax.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -47,7 +49,9 @@ import { RequestProductModule } from './request-product/request-product.module';
     BrandModule,
     CouponModule,
     SupplierModule,
-    RequestProductModule
+    RequestProductModule,
+    TaxModule,
+    ProductModule
   ],
   controllers: [AppController],
   providers: [AppService],

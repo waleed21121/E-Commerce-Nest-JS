@@ -19,5 +19,8 @@ import { CategoryModule } from 'src/category/category.module';
     PaginationModule,
     CategoryModule
   ],
+  exports: [
+    SubCategoryService,
+  ]
 })
 export class SubCategoryModule { }

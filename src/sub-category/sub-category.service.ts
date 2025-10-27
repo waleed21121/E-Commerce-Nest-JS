@@ -66,4 +66,13 @@ export class SubCategoryService {
   async remove(id: string) {
     return await this.subCategoryModel.findOneAndDelete({_id: id})
   }
+
+  async isChildCategory(subCategoryId: string, baseCategoryId: string): Promise<boolean> {
+    const subCategory = await this.subCategoryModel.findOne({
+      _id: subCategoryId,
+      category: baseCategoryId
+    })
+
+    return subCategory === null ? false : true;
+  } 
 }
