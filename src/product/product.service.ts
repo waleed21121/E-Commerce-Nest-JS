@@ -117,4 +117,24 @@ export class ProductService {
   async remove(id: string) {
     return await this.productModel.findByIdAndDelete(id);
   }
+
+  async updatePoductRatings(product: ProductDocument, newRating: number, oldRating?: number, del?: boolean) {
+    
+    let previousAveragerating = product.averageRating;
+    if(oldRating !== undefined) {
+      previousAveragerating = (product.averageRating * product.reviewsCount - oldRating) / (product.reviewsCount - 1);
+      product.reviewsCount -= 1;
+    }
+    
+    let newAveragerating = previousAveragerating;
+    if(!del) {
+      newAveragerating = (previousAveragerating * product.reviewsCount + newRating) / (product.reviewsCount + 1);
+      product.reviewsCount += 1;
+    }
+
+    await this.productModel.findByIdAndUpdate(product._id, {
+      averageRating: newAveragerating,
+      reviewsCount: product.reviewsCount
+    });
+  }
 }

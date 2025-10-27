@@ -23,6 +23,9 @@ import { BrandModule } from 'src/brand/brand.module';
     SubCategoryModule,
     CategoryModule,
     BrandModule,
+  ],
+  exports: [
+    ProductService,
   ]
 })
 export class ProductModule { }
