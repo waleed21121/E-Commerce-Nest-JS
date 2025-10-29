@@ -16,6 +16,9 @@ import { Tax, TaxSchema } from './schemas/tax-schema';
     JwtModule.registerAsync(authConfig.asProvider()),
     MongooseModule.forFeature([{ name: Tax.name, schema: TaxSchema }]),
     PaginationModule
+  ],
+  exports: [
+    TaxService,
   ]
 })
 export class TaxModule { }
