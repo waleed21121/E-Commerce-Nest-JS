@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCouponDto } from './dto/create-coupon.dto';
 import { UpdateCouponDto } from './dto/update-coupon.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -6,6 +6,8 @@ import { Coupon, CouponDocument } from './schemas/coupon.schema';
 import { Model } from 'mongoose';
 import { PaginationService } from 'src/common/pagination/pagination.service';
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination-query.dto';
+import { CartDocument } from 'src/cart/schemas/cart-schema';
+import { TaxDocument } from 'src/tax/schemas/tax-schema';
 
 @Injectable()
 export class CouponService {
@@ -52,5 +54,37 @@ export class CouponService {
 
   async remove(id: string) {
     return await this.couponModel.findOneAndDelete({_id: id});
+  }
+
+  async applyCoupon(cart: CartDocument, couponName: string, tax: TaxDocument) {
+    const coupon = await this.couponModel.findOne({name: couponName});
+    
+    if(!coupon) {
+      throw new NotFoundException(`coupon with name: ${couponName} not found`)
+    }
+
+    if(coupon.expiryDate < new Date()) {
+      throw new BadRequestException(`expired coupon`);
+    }
+
+    if(cart.coupon.length === 3) {
+      throw new BadRequestException(`you have applied 3 coupons`);
+    }
+
+    if(cart.totalPrice - coupon.discount < 0 || cart.coupon.includes({name: coupon.name, couponId: coupon._id.toString()})) {
+      throw new BadRequestException(`this coupon is not applicable on your cart.`)
+    }
+
+    cart.totalPrice -= coupon.discount;
+    cart.tax = (tax.shippingTaxRate + tax.productTaxRate) * cart.totalPrice;
+
+    cart.coupon.push({
+      couponId: coupon._id.toString(),
+      name: coupon.name
+    });
+
+    await cart.save();
+
+    return cart;
   }
 }

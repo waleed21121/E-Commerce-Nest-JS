@@ -8,6 +8,7 @@ import { ActiveUser } from 'src/decorators/active-user.decorator';
 import { ParseMongoIdPipe } from 'src/pipes/mongo-id.pipe';
 import { DeleteFromCartDto } from './dto/delete-from-cart.dto';
 import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination-query.dto';
+import { ApplyCouponDto } from './dto/apply-coupon.dto';
 
 @Controller('carts')
 export class CartController {
@@ -27,6 +28,17 @@ export class CartController {
   @Get()
   findAll(@Query() paginationDto: PaginationQueryDto) {
     return this.cartService.findAll(paginationDto);
+  }
+
+  @Roles(['user'])
+  @UseGuards(AuthGuard)
+  @Post('/apply-coupon')
+  applyCoupon(
+    @Body() applyCouponDto: ApplyCouponDto,
+    @ActiveUser('sub', ParseMongoIdPipe) userId: string
+  ) {
+    applyCouponDto.userId = userId;
+    return this.cartService.applyCoupon(applyCouponDto)
   }
 
   @Roles(['user', 'admin'])

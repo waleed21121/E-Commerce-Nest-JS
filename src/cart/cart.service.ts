@@ -14,6 +14,8 @@ import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination-query.
 import { PaginationService } from 'src/common/pagination/pagination.service';
 import { ProductDocument } from 'src/product/schemas/product.schema ';
 import { TaxDocument } from 'src/tax/schemas/tax-schema';
+import { CouponService } from 'src/coupon/coupon.service';
+import { ApplyCouponDto } from './dto/apply-coupon.dto';
 
 @Injectable()
 export class CartService {
@@ -24,6 +26,7 @@ export class CartService {
     private readonly taxService: TaxService,
     private readonly paginationService: PaginationService,
     @Inject(REQUEST) private readonly request: Request,
+    private readonly couponService: CouponService,
   ) { }
 
   async create(createCartDto: CreateCartDto) {
@@ -219,6 +222,23 @@ export class CartService {
     return {
       cart,
       productId: item.product,
+    }
+  }
+
+  async applyCoupon(applyCouponDto: ApplyCouponDto) {
+    const cart = await this.cartModel.findOne({ user: applyCouponDto.userId });
+    if (!cart) {
+      throw new BadRequestException(`user with id: ${applyCouponDto.userId} doesn't have a cart`);
+    }
+
+    const tax = await this.taxService.findOne();
+
+    const updatedCart = await this.couponService.applyCoupon(cart, applyCouponDto.couponName, tax);
+
+    return {
+      status: 200,
+      message: `coupon apllied successfully`,
+      data: updatedCart
     }
   }
 }

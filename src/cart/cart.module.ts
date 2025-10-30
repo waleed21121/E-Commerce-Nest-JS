@@ -10,6 +10,7 @@ import { ProductModule } from 'src/product/product.module';
 import { Cart, CartSchema } from './schemas/cart-schema';
 import { UserModule } from 'src/user/user.module';
 import { TaxModule } from 'src/tax/tax.module';
+import { CouponModule } from 'src/coupon/coupon.module';
 
 @Module({
   controllers: [CartController],
@@ -22,6 +23,7 @@ import { TaxModule } from 'src/tax/tax.module';
     ProductModule,
     UserModule,
     TaxModule,
+    CouponModule,
   ]
 })
 export class CartModule { }
