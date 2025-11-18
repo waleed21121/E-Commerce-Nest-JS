@@ -137,4 +137,13 @@ export class ProductService {
       reviewsCount: product.reviewsCount
     });
   }
+
+  async updateProductPurchases(id: string, qunatity: number) {
+    let product = await this.productModel.findById(id);
+    if(product) {
+      product.quantity -= qunatity;
+      product.purchases += qunatity;
+      await product.save();
+    }
+  }
 }

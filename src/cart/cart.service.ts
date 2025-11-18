@@ -241,4 +241,24 @@ export class CartService {
       data: updatedCart
     }
   }
+
+  async findUserCart(userId: string) {
+    const cart = await this.cartModel.findOne({user: userId});
+    if(!cart) {
+      throw new NotFoundException(`this user have no cart`)
+    }
+
+    return cart;
+  }
+
+  async emptyUserCart(userId: string) {
+    let cart = await this.cartModel.findOne({user: userId});
+    if(cart) {
+      cart.items = [];
+      cart.coupon = [];
+      cart.tax = 0;
+      cart.totalPrice = 0;
+      await cart.save();
+    }
+  }
 }

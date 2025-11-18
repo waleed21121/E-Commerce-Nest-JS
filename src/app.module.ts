@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -20,6 +20,9 @@ import { TaxModule } from './tax/tax.module';
 import { ProductModule } from './product/product.module';
 import { ReviewModule } from './review/review.module';
 import { CartModule } from './cart/cart.module';
+import { OrderModule } from './order/order.module';
+import { StripeModule } from './stripe/stripe.module';
+import stripeConfig from './config/stripe.config';
 
 @Module({
   imports: [
@@ -28,7 +31,11 @@ import { CartModule } from './cart/cart.module';
     AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [authConfig, mailerConfig]
+      load: [
+        authConfig,
+        mailerConfig,
+        stripeConfig
+      ]
     }),
     PaginationModule,
     MailerModule.forRootAsync({
@@ -46,6 +53,13 @@ import { CartModule } from './cart/cart.module';
         }
       })
     }),
+    StripeModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secretKey: configService.get('stripe.stripeSecretKey') || '',
+      })
+    }),
     CategoryModule,
     SubCategoryModule,
     BrandModule,
@@ -55,7 +69,8 @@ import { CartModule } from './cart/cart.module';
     TaxModule,
     ProductModule,
     ReviewModule,
-    CartModule
+    CartModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
