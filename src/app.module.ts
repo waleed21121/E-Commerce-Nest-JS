@@ -22,7 +22,9 @@ import { ReviewModule } from './review/review.module';
 import { CartModule } from './cart/cart.module';
 import { OrderModule } from './order/order.module';
 import { StripeModule } from './stripe/stripe.module';
+import { FileUploadModule } from './common/file-upload/file-upload.module';
 import stripeConfig from './config/stripe.config';
+import cloudinaryConfig from './config/cloudinary.config';
 
 @Module({
   imports: [
@@ -34,7 +36,8 @@ import stripeConfig from './config/stripe.config';
       load: [
         authConfig,
         mailerConfig,
-        stripeConfig
+        stripeConfig,
+        cloudinaryConfig
       ]
     }),
     PaginationModule,
@@ -71,6 +74,7 @@ import stripeConfig from './config/stripe.config';
     ReviewModule,
     CartModule,
     OrderModule,
+    FileUploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
