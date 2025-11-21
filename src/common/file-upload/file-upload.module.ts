@@ -7,8 +7,18 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { CloudinaryAsyncOptions } from "./interfaces/cloudinary-options";
 import { v2 as cloudinary } from 'cloudinary';
 import { CLOUDINARY_PROVIDER } from "./constants";
+import * as multer from 'multer';
+import authConfig from 'src/config/auth.config';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
+  imports: [
+    MulterModule.register({
+      storage: multer.memoryStorage(),
+    }),
+    ConfigModule.forFeature(authConfig),
+    JwtModule.registerAsync(authConfig.asProvider()),
+  ],
   controllers: [FileUploadController],
   providers: [FileUploadService, CloudinaryProvider],
   exports: [FileUploadService],
