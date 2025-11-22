@@ -25,9 +25,17 @@ import { StripeModule } from './stripe/stripe.module';
 import { FileUploadModule } from './common/file-upload/file-upload.module';
 import stripeConfig from './config/stripe.config';
 import cloudinaryConfig from './config/cloudinary.config';
+import { seconds, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot({
+      throttlers: [{
+        ttl: seconds(60),
+        limit: 10
+      }]
+    }),
     MongooseModule.forRoot('mongodb://localhost:27017/e-commerc-nestjs'),
     UserModule,
     AuthModule,
@@ -77,6 +85,12 @@ import cloudinaryConfig from './config/cloudinary.config';
     FileUploadModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    }
+  ],
 })
 export class AppModule {}

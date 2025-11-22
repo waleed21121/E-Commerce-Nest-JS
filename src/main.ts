@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -9,6 +10,15 @@ async function bootstrap() {
     bodyParser: true
   });
 
+  // Helmet
+  app.use(helmet());
+
+  // CORS
+  app.enableCors({
+    origin: '*',
+    // further more configurations
+  });
+  
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,
